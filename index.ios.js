@@ -1,5 +1,5 @@
 var MOCKED_MOVIES_DATA = [
-  {title: 'Title', year: '2015', posters: {thumbnail: 'https://i.imgur.com/UePbdph.jpg'}},
+  {title: 'Title', year: '2015', posters: {uri: 'https://i.imgur.com/UePbdph.jpg'}},
 ];
 /**
  * For quota reasons we replaced the Rotten Tomatoes' API with a sample data of
@@ -17,20 +17,65 @@ import {
 } from 'react-native';
 
 export default class React_Native extends Component {
-
+  /**
+   * Add some initial state to our application so that we can check this.state.movies === null to determine whether the movies data has been loaded or not.
+   * We can set this data when the response comes back with this.setState({movies: moviesData}).
+   * Add this code just above the render function inside our React class.
+   */
+  constructor(props) {
+    super(props);
+    this.state = {
+      movies: null,
+    };
+  }
+  /**
+   * We want to send off the request after the component has finished loading.
+   * componentDidMount is a function of React components that React will call exactly once, just after the component has been loaded.
+   */
+  componentDidMount() {
+   this.fetchData();
+  }
+  fetchData() {
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+        this.setState({
+          movies: responseData.movies,
+        });
+      })
+      .done();
+  }
   render() {
-    var movie = MOCKED_MOVIES_DATA[0];
+    if (!this.state.movies) {
+      return this.renderLoadingView();
+    }
+
+    var movie = this.state.movies[0];
+    return this.renderMovie(movie);
+  }
+
+  renderLoadingView() {
     return (
-        <View style={styles.container}>
-          <Image
-            source={require('./img/insurgent.jpg')}
-            style={styles.thumbnail}
-          />
-          <View style={styles.rightContainer}>
-            <Text style={styles.title}>{movie.title}</Text>
-            <Text style={styles.year}>{movie.year}</Text>
-          </View>
+      <View style={styles.container}>
+        <Text>
+          Loading movies...
+        </Text>
+      </View>
+    );
+  }
+
+  renderMovie(movie) {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={{uri: movie.posters.uri}}
+          style={styles.thumbnail}
+        />
+        <View style={styles.rightContainer}>
+          <Text style={styles.title}>{movie.title}</Text>
+          <Text style={styles.year}>{movie.year}</Text>
         </View>
+      </View>
     );
   }
 }
