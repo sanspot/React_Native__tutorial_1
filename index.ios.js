@@ -1,5 +1,5 @@
 var MOCKED_MOVIES_DATA = [
-  {title: 'Title', year: '2015', posters: {thumbnail: 'http://i.imgur.com/UePbdph.jpg'}},
+  {title: 'Title', year: '2015', posters: {thumbnail: 'https://i.imgur.com/UePbdph.jpg'}},
 ];
 /**
  * For quota reasons we replaced the Rotten Tomatoes' API with a sample data of
